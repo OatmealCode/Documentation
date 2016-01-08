@@ -1,0 +1,319 @@
+<html>
+<head>
+ <title>Get Started with Oatmeal</title>
+   <link href="/assets/css/app.css" rel="stylesheet"/>
+   <link href="/assets/css/prism.css" rel="stylesheet"/>
+   <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<header>
+    <ul id="slide-out" class="side-nav fixed yellow lighten-3">
+      <li class="logo">
+            <a id="logo-container" href="/" class="brand-logo">
+           <img src="/assets/images/Logo-1.png" width="75px"/>
+          </a>
+         </li>
+         <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Get Started<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                   <li><a href="/pages/Installation.html">Installation</a></li>
+                    <li><a href="/pages/Basics.html">Basics</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+                 <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Networking.html">Networking</a></li>
+                  <li><a href="/pages/Container.html">Container</a></li>
+                   <li><a href="/pages/Events.html">Events</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+    </ul> 
+</header>
+
+<body>
+<main>
+
+<div class="container">
+<div class="row">
+<div class="col m12">
+    <h1 class="blue-text">What is the Container?</h1>
+    <blockquote>
+         The Container is a device that injects dependencies and controls the larger infastructure of Oatmeal. If you haven't already, you can read <a href="/pages/Basics.html">The Basics</a> to get acquinted with the overload functions and resolving.
+    </blockquote>
+    <div class="collection">
+        <a href="#Protocols" class="collection-item">Protocols</a>
+        <a href="#Singletons" class="collection-item active">Singletons</a>
+      </div>
+
+    <h2><a name="protocols">Oatmeal Protocols</a></h2>
+    <p> Protocols are our friends! A great deal of magic in Oatmeal is based around them, and the <code>Container</code> itself even adheres to the <code>Resolveable</code> protocol itself. So if you wanted to seperate your instances of <code>Container</code> by binding them to Oats(), you could very well do that. These protocols can be stacked together to do a number of things. </p>
+    <div class="collection">
+        <a href="#Autoresolving" class="collection-item">Autoresolving</a>
+        <a href="#ProactiveResolvable" class="collection-item active">ProactiveResolvable</a>
+        <a href="#UsesEvents" class="collection-item">Binding Events</a>
+        <a href="#!" class="collection-item">Alvin</a>
+      </div>
+            
+    <h3><a name="Autoresolving">Autoresolving Dependencies</a></h3>
+    <p>Let's imagine a situation where you a class called <code>UserComposer</code>, which contains a number of class variables. </p>
+
+           <pre class="prettyprint">
+          <code>
+              class UserComposer : Resolveable
+              {
+                   static var entityName : String?  = "UserComposer"
+    
+                   var networking : Networking?
+                   var serializer : Serializer?
+                   var user : User?
+    
+                   required init()
+                   {
+                      //normally we would have to manually pull out each member
+                      //to set them
+                      if let networking : Networking = ~Oats()
+                      {
+                         self.networking = networking
+                      }
+                      if let serializer : Serializer = ~Oats()
+                      {
+                         self.serializer = serializer
+                      }
+                      if let user : User = ~Oats()
+                      {
+                          self.user = user
+                      }
+                   }
+
+              }
+          </code>
+          </pre>
+          <p>This might seem like a ton of extra work if you have a lot of classes. Thankfully we have a shortcut to make this really simple.</p>
+
+          <pre class="prettyprint">
+          <code>
+              //We simply utilize the BaseClass Autoresolveable
+              class UserComposer : Autoresolveable
+              {
+                   var networking : Networking?
+                   var serializer : Serializer?
+                   var user : [User]
+    
+                   required init()
+                   {
+                      self.user = [User]()
+                      super.init()
+                      //Note that Autoresolveable does not have a static entityName
+                      //We can use the instance variable customEntityName to set a 
+                      //custom key to pull this instance as a singleton... more 
+                      //on that later
+                      //self.customEntityName = "TheViewComposer"
+                   }
+              }
+          </code>
+          </pre>
+    <h3><a name="ProactiveResolvable">Proactive Resolveables</a></h3>
+    <p>Sometimes you might want to execute some code whenever your object is resolved from the container. We can do that with this protocol. Let's use our previous example, by pulling a user via http.</p>
+
+    <pre class="prettyprint">
+          <code>
+              //We simply utilize the BaseClass Autoresolveable
+              class UserComposer : Autoresolveable, ProactiveResolvable, UsesEvents
+              {
+                   var networking : Networking?
+                   var serializer : Serializer?
+                   var user = [User]()
+    
+                   required init()
+                   {
+                      self.user = [User]()
+                      super.init()
+                      //Note that Autoresolveable does not have a static entityName
+                      //We can use the instance variable customEntityName to set a 
+                      //custom key to pull this instance as a singleton... more 
+                      //on that later
+                      //self.customEntityName = "TheViewComposer"
+                   }
+                   // Whenever the UserComposer is resolved from the container,
+                   // We'll fetch a collection of users. 
+                   func didResolve()
+                   {
+                      if let networking = self.networking
+                      {
+                           http.GET("https://api.someApi.com/users", completion: {
+            handler in
+                          if let response = handler.response, users = response["users"]
+                          {
+                            for user in users
+                            {
+                                if let user : User = ~user
+                                {
+                                   self.users.append(user)
+                                }
+                            }
+
+                          }
+                      }
+                   }
+                   func didBind()
+                   {
+
+                   }
+              }
+          </code>
+          </pre>
+  <h3><a name="UsesEvents">Binding Events When Resolved</a></h3>
+    <p>
+      Events can be registered from any class. This protocol will register them whenever the class is resolved. Let's imagine we have a ViewController somewhere with its own events registered as well as our ViewComposer. You can read more about events <a href="http://oatmeal.dev/pages/Events.html">here</a>.
+    </p>
+
+       <pre class="prettyprint">
+          <code>
+              //We simply utilize the BaseClass Autoresolveable
+              class UserComposer : Autoresolveable, ProactiveResolvable
+              {
+                   var networking : Networking?
+                   var serializer : Serializer?
+                   var user = [User]()
+    
+                   required init()
+                   {
+                      self.user = [User]()
+                      super.init()
+                      //Note that Autoresolveable does not have a static entityName
+                      //We can use the instance variable customEntityName to set a 
+                      //custom key to pull this instance as a singleton... more 
+                      //on that later
+                      //self.customEntityName = "TheViewComposer"
+                   }
+                   // Whenever the UserComposer is resolved from the container,
+                   // We'll fetch a collection of users. 
+                   func didResolve()
+                   {
+                      if let networking = self.networking, events : Events = ~Oats()
+                      {
+                           http.GET("https://api.someApi.com/users", completion: {
+            handler in
+                          if let response = handler.response, users = response["users"]
+                          {
+                            for user in users
+                            {
+                                if let user : User = ~user
+                                {
+                                   self.users.append(user)
+                                   events.fire("NewUser",["user":user])
+                                }
+                            }
+
+                          }
+                      }
+                   }
+                   func didBind()
+                   {
+
+                   }
+                    //This method will automatically be called 
+                   // whenever the UserComposer is resolved
+                   func setEvents()
+                   {
+                      if let events : Events = ~Oats()
+                      {
+                          events.listenFor("NewUser", global: true, handler: {
+                              event in 
+                               if let data = event.data, user = data["user"] as? User
+                               {
+                                  user.name = user.name.uppercaseString
+                                  //Lets call the event in our ViewController 
+                                  //with our santised user to be put in the table view
+                                  events.fire("AddUserToTableView",["user":user])
+                               }
+                          } 
+                      }
+                   }
+              }
+          </code>
+          </pre>
+
+             <h2><a name="Singletons">Working With Singletons</a></h2>
+             <p>
+             Singletons are different from regular members by one key fact: they persist for the lifecycle of your application from the moment you stick them into the container. In fact, <a href="/pages/Events.html">Events</a> are a singleton. Classes of the same type can be stored in the container as a Singleton as long as they have a unique entityName or customEntityName if they are <code>Autoresolveable</code></p>
+
+             <h4>When should I use a Singleton?</h4>
+             <p>Most classes you utilize with Oatmeal do not need to be a singleton. In fact, if you just need to persist state you can use the Filecache to do so for later retrieval. Using the <code>
+             get&lt;T:Resolveable&lt;()</code> method, you can return your object back in mostly the same state it was when you cached it. Serialization for common Types is supported. Events is a Singleton because it waits for recievers to act upon.</p>
+
+             <h4>Adding a singleton to the container</h4>
+          <pre class="prettyprint">
+               <code>
+                  //As discussed earlier this is pretty trivial.
+                  let composer = UserComposer()
+                  composer <~> ~Oats()
+                  let myUser = User()
+                  myUser.name = "mikenolimits"
+                  composer.user.append(myUser)
+                  //now our composer is in the container, we can utilize it from 
+                  //anywhere in our app
+               </code>
+          </pre>
+          <h4>Retrieving a singleton</h4>
+          <p>This is actually done the same way as any other object.</p>
+             <pre class="prettyprint">
+               <code>
+                  if let composer : UserComposer = ~Oats()
+                  {
+                     let myUser = composer.user.first()
+                     print(myUser.name)
+                  }
+               </code>
+          </pre>
+          <h4>Retrieving a singleton by a customEntityName</h4>
+             <pre class="prettyprint">
+               <code>
+                  //objects can actually be pulled by their key,
+                  //This is done slightly differently and reads
+                  // Resolve UserComposer from the key "TheUserComposer"
+                  if let composer : UserComposer = ~"TheUserComposer"
+                  {
+                     let myUser = composer.user.first()
+                     print(myUser.name)
+                  }
+                  //Alternatively you can do 
+                  if let composer : UserComposer = Oats().get("TheUserComposer")
+                  {
+                     
+                  }
+               </code>
+          </pre>
+</div>
+</div>
+</div>
+
+
+
+     <script src="/assets/js/jquery.js"></script>
+     <script src="/assets/js/materialize.js"></script>
+     <script src="/assets/js/prism.js"></script>
+     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+     <script>
+  $(document).ready(function(){
+      $('.parallax').parallax();
+        $('.button-collapse').sideNav();
+    });
+    </script>   
+     </main>
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+<html>
+<head>
+ <title>Get Started with Oatmeal</title>
+ <link href="/assets/css/app.css" rel="stylesheet"/>
+  <link href="/assets/css/prism.css" rel="stylesheet"/>
+   <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<header>
+    <ul id="slide-out" class="side-nav fixed yellow lighten-3">
+      <li class="logo">
+            <a id="logo-container" href="/" class="brand-logo">
+           <img src="/assets/images/Logo-1.png" width="75px"/>
+          </a>
+         </li>
+         <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Get Started<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Installation.html">Installation</a></li>
+                    <li><a href="/pages/Basics.html">Basics</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+                 <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                         <li><a href="/pages/Networking.html">Networking</a></li>
+                  <li><a href="/pages/Container.html">Container</a></li>
+                   <li><a href="/pages/Events.html">Events</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+    </ul> 
+</header>
+
+<body>
+<main>
+<div class="container">
+
+<div class="row">
+<div class="col m12">
+        <h1 class="blue-text">What is Networking?</h1>
+    <blockquote>
+         Networking is a simple class utilizing Alamofire to make asynchronous HTTP requests.
+    </blockquote>
+    <div class="collection">
+        <a href="#Requests" class="collection-item">Making a Request</a>
+        <a href="#BasicResponses" class="collection-item active">Parsing Basic Responses</a>
+     <a href="#SerializedResponses" class="collection-item active">Serializing Responses to objects</a>
+      </div>
+      <h2><a name="Requests">Making a Request</a></h2>
+
+      <pre class="prettyprint">
+      <code> 
+      if let http : Networking = ~Oats()
+      {
+          http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem", completion: {
+            handler in
+                if let response = handler.response
+                {
+                   print(response["album"]["name"].stringValue) //outputs "The Killers"
+                }
+            })
+       }
+      </code>
+      </pre>
+      <h4>Adding Query Arguments</h4>
+
+      <pre class="prettyprint"><code>
+  //Pass a dictionary of [String:String] to parameters 
+  //to add a query
+    http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem", 
+        parameters: ["market" : "US"], completion: {
+            handler in
+            if let response = handler.response
+            {
+                print(response)
+                //outputs "The Killers"
+            }
+        })
+          </code>
+      </pre>
+
+            <h4>Adding Headers</h4>
+
+      <pre class="prettyprint"><code>
+    if let http : Networking = ~Oats()
+    {
+        http["Authorization"] = "MySecretKey"
+        http["timestamp"]     = String(NSDate().timeIntervalSince1970)     
+
+        http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem", completion: {
+                   handler in 
+           })
+       }
+          </code>
+      </pre>
+      <h4>Using other HTTP Methods</h4>
+      <p>PUT,POST,DELETE all work the same way as GET. Simply call the respective method for the method you'd like to use.</p>
+<h2><a name ="BasicResponses">Working with Responses</a></h2>
+   <p>
+   Requests can return either a <code>ResponseHandler</code> or a <code>SerializebleObject</code>. These get passed into the completion. We've already been using the <code>ResponseHandler</code>, in a few examples above. Let's get into more detail on how we can work with the data that's returned.  
+   </p>
+
+   <h3>Checking success & reading the response</h3>
+
+   <p>Let's image we have an Song class. We're going to hit the API and create it from the json.</p>
+    <pre class="prettyprint">
+    <code>
+    import Oatmeal 
+
+    class Song{
+       var name : String
+       var href : String 
+
+       init(name:String,href:String)
+       {
+         self.name = name
+         self.href = name
+       }
+    }
+    </code>
+    </pre>
+    <pre class="prettyprint">
+    <code>
+    http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem" completion: {
+            handler in
+              //A typical response is given back as JSON, but you can
+              //access the raw string using handler.responseString
+             if let data = handler.response where handler.success
+             {
+                let name  = data["name"]
+                let href  = data["href"]
+                let HotFuss = Song(name,href:href)
+             }
+             //You can also read the headers...
+             if let headers = handler.headers{
+                print(headers[""])
+             }
+        })
+          </code>
+      </pre>
+      <p>Great, we were able to create a class using the JSON we got from the API. Now if we had a ton more variables in our Song this code might have looked a lot longer. Networking actually has a builtin shortcut for making this easier.</p>
+
+      <h3><a name="SerializedResponses">Serializing responses to objects</a></h3>
+      <p>First we're going to have to modify our album just slightly.</p>
+
+        <pre class="prettyprint">
+    <code>
+    import Oatmeal 
+
+    class Song : SerializebleObject{
+       var name : String?
+       var href : String?
+
+        required init()
+       {
+
+      }
+    }
+    </code>
+    </pre>
+
+    <p>Now we can modify our http code.</p>
+    <pre class="prettyprint">
+    <code>
+       http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem", completion: {
+            (song : Song, success) in
+            print(song.name)
+        })
+    </code>
+    </pre>
+    <h4>Serializing Subobjects</h4>
+    <p>Let's modify our scenerio slightly by adding an Album class and modifying our Song to contain an album variable</p>
+
+   <pre class="prettyprint">
+    <code>
+    import Oatmeal 
+
+    class Album : SerializebleObject{
+       var name : String?
+       var href : String?
+       var avaliable_markets : [String] 
+
+       required init()
+       {
+         self.avaliable_markets = [String]()
+      }
+    }
+    </code>
+    </pre>
+    <pre class="prettyprint">
+    <code>
+    import Oatmeal
+
+    class Song : SerializebleObject{
+        var name : String?
+        var href : String?
+        var album : Album?
+        
+        required init()
+        {
+
+        }
+    }
+    </code>
+    </pre>
+
+      <pre class="prettyprint">
+    <code>
+         http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem", completion: {
+            (song : Song, success) in
+            print(song.name)
+            print(song.album?.name)
+            print(song.album?.available_markets)
+        })
+    </code>
+    </pre>
+</div>
+
+</div>
+
+</div>
+
+     </main>
+
+        <script src="/assets/js/jquery.js"></script>
+         <script src="/assets/js/materialize.js"></script>
+         <script src="/assets/js/prism.js"></script>
+         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+     <script>
+  $(document).ready(function(){
+      $('.parallax').parallax();
+        $('.button-collapse').sideNav();
+    });
+    </script>   
+</body>
+
+</html>

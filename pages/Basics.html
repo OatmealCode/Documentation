@@ -1,0 +1,137 @@
+<html>
+<head>
+ <title>Get Started with Oatmeal</title>
+ <link href="/assets/css/app.css" rel="stylesheet"/>
+  <link href="/assets/css/prism.css" rel="stylesheet"/>
+   <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<header>
+    <ul id="slide-out" class="side-nav fixed yellow lighten-3">
+    <li class="logo">
+            <a id="logo-container" href="/" class="brand-logo">
+           <img src="/assets/images/Logo-1.png" width="75px"/>
+          </a>
+         </li>
+         <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Get Started<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Installation.html">Installation</a></li>
+                    <li><a href="/pages/Basics.html">Basics</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+                 <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Networking.html">Networking</a></li>
+                  <li><a href="/pages/Container.html">Container</a></li>
+                   <li><a href="/pages/Events.html">Events</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+    </ul> 
+</header>
+
+<body>
+<main>
+<div class="container">
+
+<div class="row">
+<div class="col m12">
+    <h2>Usage</h2>
+   <p> 
+    Everything starts with <code class=" language-swift">Oats()</code>
+    and its three resolver functions <code class=" language-swift">~, ~>, <~></code>
+    </p>
+
+    <h4>Pulling out a key component from Oatmeal</h4>
+    <p> The <code class=" language-swift">~</code> overload is short for "Resolve _____ from _____". Usually we're using Oatmeal directly, but other times this could be JSON or Cache. </p>
+    <pre class="prettyprint">
+    <code>
+          // In this case, ~ is shorthand for "Resolve Networking from Oatmeal"
+          if let HTTP : Networking = ~Oats()
+          {
+             print("You got the component \(HTTP.entityName)")
+          }
+          </code>
+    </pre>
+    <h4>Putting in a key component to Oatmeal</h4>
+    <p>The only requirement to put something into Oatmeal is that it utilizes the <code class=" language-swift">Resolveable</code> protocol. So you'll need an <code class=" language-swift">var entityName: String? </code> on your class as well as the required <code>init()</code> </p>
+    <p>
+    As a rule,  <code class=" language-swift">~></code> indicates a <b>weak</b> binding <b>to</b> Oatmeal, and <code class=" language-swift"><~></code> indicates a <b>strong</b> binding <b>to</b> Oatmeal. The key difference is that <code class=" language-swift"><~></code> will make sure your object sticks around for the lifecycle of your application. 
+    </p>
+    <p>
+      Let's define a class called Cat 
+    <pre class="prettyprint">
+         <code>
+          class Cat : Resolveable
+          {
+              var entityName : String? = "Cat"
+              var legs : Int = 0
+              public required init()
+              {
+
+              }
+          }
+        </code>
+     </pre>   
+    </p>
+    <p>Now we can bind it to Oatmeal</p>
+    <p><u>Weakly:</u></p>
+        <pre class="prettyprint">
+          <code>
+             var myClass = Cat()
+             myClass.legs = 2
+             Oats() ~> myClass
+             if let myKitty : Cat = ~Oats()
+             {
+                print(myKitty.legs)  //prints 0
+             }
+          </code>
+    </pre>
+   <p><u>Strongly:</u></p>
+        <pre class="prettyprint">
+          <code>
+             var myClass = Cat()
+             myClass.legs = 2
+             Oats() <~> myClass
+             if let myKitty : Cat = ~Oats()
+             {
+                print(myKitty.legs)  //prints 2
+             }
+          </code>
+    </pre>
+    <p>Strong & weak bindings both offer a number of perks which is discussed further in <a href="/pages/Container.html">The Container</a>, but generally you want to use a weak binding.</p>
+</div>
+
+</div>
+
+</div>
+
+
+
+     <script src="/assets/js/jquery.js"></script>
+     <script src="/assets/js/materialize.js"></script>
+         <script src="/assets/js/prism.js"></script>
+         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+     <script>
+  $(document).ready(function(){
+      $('.parallax').parallax();
+        $('.button-collapse').sideNav();
+    });
+    </script>   
+     </main>
+</body>
+
+</html>

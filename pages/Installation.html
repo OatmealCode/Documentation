@@ -1,0 +1,99 @@
+<html>
+<head>
+ <title>Get Started with Oatmeal</title>
+ <link href="/assets/css/app.css" rel="stylesheet"/>
+  <link href="/assets/css/prism.css" rel="stylesheet"/>
+   <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+       <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<header>
+
+    <ul id="nav-mobile" class="side-nav fixed yellow lighten-3">
+    <li class="logo">
+            <a id="logo-container" href="/" class="brand-logo">
+           <img src="/assets/images/Logo-1.png" class="center" width="75px"/>
+          </a></li>
+         <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+
+          <li>
+            <a class="collapsible-header">Get Started<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Installation.html">Installation</a></li>
+                    <li><a href="/pages/Basics.html">Basics</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+                 <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/HTTP.html">HTTP</a></li>
+                   <li><a href="/pages/Events.html">Events</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+    </ul> 
+</header>
+
+<body>
+<main>
+<div class="container">
+<div class="row">
+<div class="col m12">
+
+<h1 class="blue-text">Installation</h1>
+  
+  <h4>CocoaPods</h4>
+
+<p>(<a href="http://cocoapods.org">CocoaPods</a>) is a dependency manager for Cocoa projects. You can install it with the following command:</p>
+
+<pre class="language-ruby">
+<code class=" language-ruby">$ gem install cocoapods
+</code></pre>
+
+<p> CocoaPods 0.39.0+ is required to build Oatmeal </p>
+
+<p>To integrate Oatmeal into your Xcode project using CocoaPods, specify it in your <b>Podfile</b>:</p>
+<pre class="language-ruby">
+<code class=" language-ruby">
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.0'
+use_frameworks!
+
+pod 'Oatmeal'
+</code>
+</pre>
+Then, run the following command:
+
+<code class=" language-swift">$ pod install</code>
+   <p>
+    Sweet! We got the hard part over with. Just kidding, let's see if everything is working.
+    Navigate to your ViewController or AppDelegate and add <code class=" language-swift">import Oatmeal</code> to the top of your class and attempt to build. If no compile errors come up, we're good to go.
+    </p>
+</div>
+</div>
+
+     <script src="/assets/js/jquery.js"></script>
+     <script src="/assets/js/materialize.js"></script>
+         <script src="/assets/js/prism.js"></script>
+         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+     <script>
+  $(document).ready(function(){
+      $('.parallax').parallax();
+        $('.button-collapse').sideNav();
+    });
+    </script>   
+     </main>
+</body>
+
+</html>

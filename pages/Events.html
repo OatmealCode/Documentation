@@ -1,0 +1,173 @@
+<html>
+<head>
+ <title>Supercharge your iOS/OSX/TVOS app with Oatmeal!</title>
+ <link href="/assets/css/app.css" rel="stylesheet"/>
+   <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<header>
+  <ul id="nav-mobile" class="side-nav fixed yellow lighten-3">
+    <li class="logo">
+            <a id="logo-container" href="/" class="brand-logo">
+           <img src="/assets/images/Logo-1.png" width="75px"/>
+          </a>
+         </li>
+         <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+
+          <li>
+            <a class="collapsible-header">Get Started<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Installation.html">Installation</a></li>
+                    <li><a href="/pages/Basics.html">Basics</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+                 <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Networking.html">Networking</a></li>
+                  <li><a href="/pages/Container.html">Container</a></li>
+                   <li><a href="/pages/Events.html">Events</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+    </ul> 
+</header>
+
+<body>
+<main>
+<div class="container">
+<div class="row">
+<div class="col m12">
+<h1 class="blue-text">What are events?</h1>
+    <blockquote>
+      They are bound to the container as a Singleton, and can be used to exchange messages between views, Resolveable objects & more. Pretty much, a simplier version of NSNotification
+    </blockquote>
+<h2>Listening for an event</h2>
+    <p>
+       <pre class="prettyprint">
+         <code>
+         //The second argument "global" indicates wether or not an event 
+         //should only be triggered in its origin controller or not.
+        if let events : Events = ~Oats()
+        {
+             events.listenFor("ApplicationBooted", global: true, handler: {
+                event in
+                
+                 print("The application has booted")
+            })
+        }
+        </code>
+    </pre>
+    </p>
+    <h3>Parsing arguments sent to an Event</h3>
+      <p>
+       <pre class="prettyprint">
+         <code>
+         //the event passed to the closure accepts a payload as [String:AnyObject]
+         //If we unwrap data we can use the payload passed.
+        if let events : Events = ~Oats()
+        {
+             events.listenFor("ApplicationBooted", global: true, handler: {
+                event in
+                 if let data = event.data, textLabel = data["label"] as? UILabel
+                 {
+                     textLabel.text =  "The application has booted!"
+                 }
+            })
+        }
+        </code>
+    </pre>
+    </p>
+    <h2>Firing an event</h2>
+    <p>
+       <pre class="prettyprint">
+         <code>
+        if let events : Events = ~Oats()
+        {
+           events.fire("ApplicationBooted")
+        }
+    </code>
+    </pre>
+    </p>
+       <h3>Passing arguments to an Event</h3>
+
+          <p>
+       <pre class="prettyprint">
+         <code>
+        if let events : Events = ~Oats()
+        {
+           events.fire("ApplicationBooted", ["label" : self.textLabel])
+        }
+    </code>
+    </pre>
+    </p>
+
+         <h2>Getting an event and modifying it</h2>
+
+          <p>
+       <pre class="prettyprint">
+         <code>
+        if let events : Events = ~Oats(), event = events.get("ApplicationBooted")
+        {
+            event.namespace = "NotificationController"
+            event.data      = ["label": UILabel()]
+        }
+    </code>
+    </pre>
+    </p>
+
+        <h2>Flushing a single event</h2>
+
+          <p>
+       <pre class="prettyprint">
+         <code>
+        if let events : Events = ~Oats()
+        {
+           events.dispose("ApplicationBooted")
+        }
+    </code>
+    </pre>
+    </p>
+
+      <h2>Flushing all events</h2>
+
+          <p>
+       <pre class="prettyprint">
+         <code>
+        if let events : Events = ~Oats()
+        {
+           events.flush()
+        }
+    </code>
+    </pre>
+    </p>
+
+</div>
+</div>
+
+
+
+     <script src="/assets/js/jquery.js"></script>
+     <script src="/assets/js/materialize.js"></script>
+         <script src="/assets/js/prism.js"></script>
+         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+     <script>
+  $(document).ready(function(){
+      $('.parallax').parallax();
+        $('.button-collapse').sideNav();
+    });
+    </script>  
+    </main>
+</body>
+
+</html>
