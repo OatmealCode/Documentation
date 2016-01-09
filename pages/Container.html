@@ -35,6 +35,8 @@
                   <li><a href="/pages/Networking.html">Networking</a></li>
                   <li><a href="/pages/Container.html">Container</a></li>
                    <li><a href="/pages/Events.html">Events</a></li>
+                   <li><a href="/pages/Configuration.html">Configuration</a></li>
+                  <li><a href="/pages/Cache.html">Cache</a></li>
               </ul>
               </div>
               </li>
@@ -64,7 +66,6 @@
         <a href="#Autoresolving" class="collection-item">Autoresolving</a>
         <a href="#ProactiveResolvable" class="collection-item active">ProactiveResolvable</a>
         <a href="#UsesEvents" class="collection-item">Binding Events</a>
-        <a href="#!" class="collection-item">Alvin</a>
       </div>
             
     <h3><a name="Autoresolving">Autoresolving Dependencies</a></h3>
@@ -102,6 +103,7 @@
           </code>
           </pre>
           <p>This might seem like a ton of extra work if you have a lot of classes. Thankfully we have a shortcut to make this really simple.</p>
+          <p><b>Note: In order for this to work, your class must be bound to Oatmeal. You can do this by adding it to a <a href="/pages/Installation.html#ServiceProvider" target="_blank">ServiceProvider</a></b></p>
 
           <pre class="prettyprint">
           <code>
@@ -293,7 +295,7 @@
                   //Alternatively you can do 
                   if let composer : UserComposer = Oats().get("TheUserComposer")
                   {
-                     
+
                   }
                </code>
           </pre>

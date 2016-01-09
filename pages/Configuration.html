@@ -1,0 +1,203 @@
+<html>
+<head>
+ <title>Supercharge your iOS/OSX/TVOS app with Oatmeal!</title>
+ <link href="/assets/css/app.css" rel="stylesheet"/>
+   <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<header>
+  <ul id="nav-mobile" class="side-nav fixed yellow lighten-3">
+    <li class="logo">
+            <a id="logo-container" href="/" class="brand-logo">
+           <img src="/assets/images/Logo-1.png" width="75px"/>
+          </a>
+         </li>
+         <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+
+          <li>
+            <a class="collapsible-header">Get Started<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                  <li><a href="/pages/Installation.html">Installation</a></li>
+                    <li><a href="/pages/Basics.html">Basics</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+                 <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
+            <div class="collapsible-body">
+              <ul>
+                 <li><a href="/pages/Networking.html">Networking</a></li>
+                  <li><a href="/pages/Container.html">Container</a></li>
+                   <li><a href="/pages/Events.html">Events</a></li>
+                   <li><a href="/pages/Configuration.html">Configuration</a></li>
+                  <li><a href="/pages/Cache.html">Cache</a></li>
+              </ul>
+              </div>
+              </li>
+              </ul>
+              </li>
+    </ul> 
+</header>
+
+<body>
+<main>
+<div class="container">
+<div class="row">
+<div class="col m12">
+<h1 class="blue-text">What is Configuration?</h1>
+    <blockquote>
+      Configuration is a fairly simply Key Value storage that can utilize pLists files to read from. 
+    </blockquote>
+ <div class="collection">
+        <a href="#Setup" class="collection-item">Setting Configuration</a>
+        <a href="#BasicUsage" class="collection-item active">Basic Usage</a>
+        <a href="#Namespaces" class="collection-item active">Namespaces</a>
+      </div>
+
+<h2><a name="Setup">Setting Configuration</a></h2>
+<p>By default Configuration will look for a Setting.plist file in your app bundle to read from. So you should create this file if you do not already have one, and can use the example below to work from.</p>
+<pre class="prettyprint">
+<code>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+&lt;plist version="1.0">
+&lt;dict>
+  &lt;key>GameParams&lt;/key>
+  &lt;dict>
+    &lt;key>Players&lt;/key>
+    &lt;dict>
+      &lt;key>Snake&lt;/key>
+      &lt;dict>
+        &lt;key>Wiggle&lt;/key>
+        &lt;dict>
+          &lt;key>Frames&lt;/key>
+          &lt;array>
+            &lt;string>character_w-01&lt;/string>
+            &lt;string>character_w-02&lt;/string>
+            &lt;string>character_w-03&lt;/string>
+            &lt;string>character_w-04&lt;/string>
+            &lt;string>character_w-05&lt;/string>
+            &lt;string>character_w-06&lt;/string>
+            &lt;string>character_w-07&lt;/string>
+          &lt;/array>
+          &lt;key>FPS&lt;/key>
+          &lt;integer>16&lt;/integer>
+          &lt;key>AtlasFileName&lt;/key>
+          &lt;string>Worm&lt;/string>
+        &lt;/dict>
+      &lt;/dict>
+    &lt;/dict>
+  &lt;/dict>
+  &lt;key>LOG_LOCATION&lt;/key>
+  &lt;string>/Users/YourName/Apps/Oatmeal/Example/Oatmeal/App.txt&lt;/string>
+  &lt;key>LOG_HTTP&lt;/key>
+  &lt;true/>
+  &lt;key>LOG_ENABLED&lt;/key>
+  &lt;true/>
+&lt;/dict>
+&lt;/plist>
+</code>
+</pre>
+
+<h2 ><a name="BasicUsage">Basic Usage</a></h2>
+<h3>Reading a configuration key</h3>
+<pre class="prettyprint">
+<code>
+   if let config : Configuration = ~Oats(), logLocation = config.get("LOG_LOCATION")
+   {
+      //config values are returned as AnyObject and can
+      //be casted for your case use.
+      print(logLocation)
+   }
+</code>
+</pre>
+<h3>Reading a key n levels deep.</h3>
+<pre class="prettyprint">
+<code>
+   //As in the example above, most pList files are not flat K/V stores
+   //They contain dictionaries and arrays that seperate them all the way down.
+   if let config : Configuration = ~Oats(), players = config.get("GameParams.Players") as? [String:AnyObject]
+   {
+      print(players["Snake"])  
+   }
+</code>
+</pre>
+<h3>Checking if a key exists</h3>
+<pre class="prettyprint">
+<code>
+   if let config : Configuration = ~Oats()
+   {
+      if(config.has("GameParams.Players.Snake"))
+      {
+         print("This key does exist!")
+      }
+   }
+</code>
+</pre>
+<h2>Setting a configuration key</h2>
+
+<pre class="prettyprint">
+<code>
+   if let config : Configuration = ~Oats()
+   {
+       let location = NSBundle.mainBundle().pathForResource("App.txt", ofType: "txt")
+       config.set("LOG_LOCATION",location)
+       let words = ["words" : [ "en" : ["Yes","No"], "es" : ["Si","No"] ]]
+       config.set("Words",words)
+
+       if let words = config.get("Words.en"), en = words["en"]
+       {
+          print(en[0])
+       }
+   }
+</code>
+</pre>
+<h2><a name="Namespaces">Working with namespaces</a></h2>
+<p>In larger applications it might not be convenient to store all your configuration settings in one plist. Namespaces serve as a way to seperate these settings and prevent name collision issues.</p>
+
+<pre class="prettyprint">
+<code>
+   //Filenames will be used as a "namespace by default"
+   //But if you are setting keys manually you can specify the namespace
+   //using the namespace parameter
+   if let config : Configuration = ~Oats()
+   {
+        config.set("GameSettings")
+        config.set("AppName",value:"RedBull", namespace:"Settings")
+        config.set("AppName",value:"Monster", namespace:"GameSettings")
+        if let appName = config.get("AppName",namespace: "GameSettings")
+        {
+           print(appName)
+        }
+        if let appName = config.get("AppName",namespace: "Settings")
+        {
+           print(appName)
+        }
+   }
+</code>
+</pre>
+</div>
+</div>
+
+
+
+     <script src="/assets/js/jquery.js"></script>
+     <script src="/assets/js/materialize.js"></script>
+         <script src="/assets/js/prism.js"></script>
+         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+     <script>
+  $(document).ready(function(){
+      $('.parallax').parallax();
+        $('.button-collapse').sideNav();
+    });
+    </script>  
+    </main>
+</body>
+
+</html>

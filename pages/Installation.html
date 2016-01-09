@@ -35,13 +35,17 @@
             <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
             <div class="collapsible-body">
               <ul>
-                  <li><a href="/pages/HTTP.html">HTTP</a></li>
+             <li><a href="/pages/Networking.html">Networking</a></li>
+                  <li><a href="/pages/Container.html">Container</a></li>
                    <li><a href="/pages/Events.html">Events</a></li>
+                   <li><a href="/pages/Configuration.html">Configuration</a></li>
+                  <li><a href="/pages/Cache.html">Cache</a></li>
               </ul>
               </div>
               </li>
               </ul>
               </li>
+
     </ul> 
 </header>
 
@@ -52,8 +56,13 @@
 <div class="col m12">
 
 <h1 class="blue-text">Installation</h1>
+
+<div class="collection">
+        <a href="#Cocoapods" class="collection-item">Cocoapods</a>
+        <a href="#ServiceProvider" class="collection-item active">Service Provider</a>
+      </div>
   
-  <h4>CocoaPods</h4>
+  <h4><a name="Cocoapods">CocoaPods</a></h4>
 
 <p>(<a href="http://cocoapods.org">CocoaPods</a>) is a dependency manager for Cocoa projects. You can install it with the following command:</p>
 
@@ -81,6 +90,81 @@ Then, run the following command:
     Navigate to your ViewController or AppDelegate and add <code class=" language-swift">import Oatmeal</code> to the top of your class and attempt to build. If no compile errors come up, we're good to go.
     </p>
 </div>
+<h3><a name="ServiceProvider">Create The OatmealService Provider</a></h3>
+<p>This provider is required for Oatmeal to work. You can append any classes you want Oatmeal to know about to the provides array.</p>
+ <pre class="prettyprint">
+   <code>
+import Foundation  
+import Oatmeal  
+
+final class OatmealServiceProvider : ServiceProvider
+{
+     /*
+        This is the default service provider for Oatmeal. 
+        Objects removed will not be accessible unless bound later.
+     */
+    var provides : [Resolveable.Type] = [
+        FileCache.self,
+        MemoryCache.self,
+        Configuration.self,
+        FileLog.self,
+        Reachability.self,
+        Networking.self,
+        HttpLog.self,
+        Serializer.self,
+        Reflections.self,
+    ]
+    
+    func registerCustomTypes() -> [Any.Type]
+    {
+        return [Any.Type]()
+    }
+}
+    </code>
+  </pre>
+  <h3>Bind the provider in our AppDelegate File</h3>
+  <pre class="prettyprint">
+<code>
+import UIKit
+import Oatmeal
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool
+    {
+        Container.App.register(OatmealServiceProvider())
+    
+        // Override point for customization after application launch.
+        return true
+    }
+
+    func applicationWillResignActive(application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    }
+
+    func applicationDidEnterBackground(application: UIApplication) {
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    }
+
+    func applicationWillEnterForeground(application: UIApplication) {
+        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    }
+
+    func applicationDidBecomeActive(application: UIApplication) {
+        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    }
+
+    func applicationWillTerminate(application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+}
+   </code>
+  </pre>
 </div>
 
      <script src="/assets/js/jquery.js"></script>

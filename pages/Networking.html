@@ -32,9 +32,11 @@
             <a class="collapsible-header">Components<i class="mdi-navigation-arrow-drop-down"></i></a>
             <div class="collapsible-body">
               <ul>
-                         <li><a href="/pages/Networking.html">Networking</a></li>
+                     <li><a href="/pages/Networking.html">Networking</a></li>
                   <li><a href="/pages/Container.html">Container</a></li>
                    <li><a href="/pages/Events.html">Events</a></li>
+                   <li><a href="/pages/Configuration.html">Configuration</a></li>
+                  <li><a href="/pages/Cache.html">Cache</a></li>
               </ul>
               </div>
               </li>
@@ -56,7 +58,8 @@
     <div class="collection">
         <a href="#Requests" class="collection-item">Making a Request</a>
         <a href="#BasicResponses" class="collection-item active">Parsing Basic Responses</a>
-     <a href="#SerializedResponses" class="collection-item active">Serializing Responses to objects</a>
+        <a href="#SerializedResponses" class="collection-item active">Serializing Responses to objects</a>
+        <a href="#Reachability" class="collection-item active">Checking for an Internet Connection</a>
       </div>
       <h2><a name="Requests">Making a Request</a></h2>
 
@@ -190,11 +193,11 @@
     class Album : SerializebleObject{
        var name : String?
        var href : String?
-       var avaliable_markets : [String] 
+       var available_markets : [String] 
 
        required init()
        {
-         self.avaliable_markets = [String]()
+         self.available_markets = [String]()
       }
     }
     </code>
@@ -226,6 +229,19 @@
         })
     </code>
     </pre>
+    <h3><a name="Reachability">Checking for an internet Connection</a></h3>
+       <pre class="prettyprint">
+    <code>
+     if let http : Networking = ~Oats() where http.isConnected
+      {
+          print("We got an Internet Connection!")
+          http.GET("https://api.spotify.com/v1/tracks/0eGsygTp906u18L0Oimnem", completion: {
+            handler in
+                 ...
+            })
+       }
+       </code>
+       </pre>
 </div>
 
 </div>
